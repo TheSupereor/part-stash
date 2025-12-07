@@ -13,8 +13,8 @@ app.get('/', (req, res) => {
   res.send('Part-Stash API v0.1');
 })
 
-app.use('api/catalog', catalogRoutes);
-app.use('api/invetory', inventoryRoutes);
+app.use('/api/catalog', catalogRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 sequelize.sync({force: false}).then(() => {
   console.log('Database connected and Models Synced.');
