@@ -1,6 +1,11 @@
-import CatalogItem from "../models/CatalogItem";
 import { Request, Response } from "express";
 import InventoryItem from "../models/InventoryItem";
+import CatalogItem from "../models/CatalogItem";
+import InventoryService from "../services/InventoryService";
+
+interface errorRes {
+  message: string
+}
 
 const addInventoryItem = async (req: Request, res: Response) => {
   try {
@@ -35,19 +40,21 @@ const getAllInventory = async (req: Request, res: Response) => {
 
 const checkoutInventoryItem = async (req: Request, res: Response) => {
   try {
-    const { invetoryId } = req.params;
+    const { inventoryId } = req.params;
     const { quantityToCheckout } = req.body;
 
-    const item = await InventoryItem.findByPk(invetoryId);
-    if (!item) return res.status(204).json({ error: "item not found" });
-    if ((item as any).quantity < quantityToCheckout) res.status(400).json({ error: "not enough stock" });
+    const updatedItem = await InventoryService.checkoutItem(Number(inventoryId), quantityToCheckout);
 
-    (item as any).quantity -= quantityToCheckout;
-    await item.save();
-
-    res.status(200).json(item);
-  } catch (error) {
-    res.status(400).json({error: "an error ocurred"})
+    res.status(200).json(updatedItem);
+  } catch (error: unknown) {
+    const errorMessage = error as errorRes;
+    if (errorMessage.message === 'ITEM_NOT_FOUND') {
+      return res.status(404).json({ error: 'Item não encontrado no inventário' });
+    }
+    if (errorMessage.message === 'INSUFFICIENT_STOCK') {
+      return res.status(400).json({ error: 'Estoque insuficiente' });
+    }
+    res.status(500).json({ error: 'Erro interno do servidor' });
   }
 };
 

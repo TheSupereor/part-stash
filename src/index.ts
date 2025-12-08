@@ -3,9 +3,12 @@ import sequelize from './config/database';
 
 import catalogRoutes from "./routes/catalogRoutes";
 import inventoryRoutes from "./routes/inventoryRoutes";
+import { initModels } from './models';
 
 const app = express();
 app.use(express.json());
+initModels(sequelize);
+sequelize.sync();
 
 const PORT = process.env.PORT || 3000;
 

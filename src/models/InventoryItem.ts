@@ -1,22 +1,49 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
-import CatalogItem from "./CatalogItem.js";
+import { DataTypes, Model, Optional } from "sequelize";
 
-const InventoryItem = sequelize.define('InvetoryItem', {
-  location: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  quantity: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  }
-})
+interface InventoryItemAttributes {
+  id: number;
+  location: string;
+  quantity: number;
+  catalogItemId?: number;
+}
 
-CatalogItem.hasMany(InventoryItem);
-InventoryItem.belongsTo(CatalogItem, {
-  foreignKey: 'catalogItemId'
-});
+type InventoryItemCreationAttributes = Optional<
+  InventoryItemAttributes,
+  "id"
+>;
+
+export class InventoryItem
+  extends Model<InventoryItemAttributes, InventoryItemCreationAttributes>
+  implements InventoryItemAttributes
+{
+  public id!: number;
+  public location!: string;
+  public quantity!: number;
+  public catalogItemId?: number;
+}
+
+export function initInventoryItem(sequelize: any) {
+  InventoryItem.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+    },
+    { sequelize, modelName: "InventoryItem" }
+  );
+
+  return InventoryItem;
+}
 
 export default InventoryItem;
