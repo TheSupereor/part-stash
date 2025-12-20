@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post('/', addInventoryItem);
 router.get('/', getAllInventory);
-router.put('/:invetoryId/checkout', checkoutInventoryItem);
+router.put('/:inventoryId/checkout', checkoutInventoryItem);
 
 export default router;

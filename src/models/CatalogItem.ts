@@ -1,34 +1,41 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
-export class CatalogItem extends Model {
+export interface CatalogItemAttributes {
+  id?: number;
+  name: string;
+  description?: string;
+  partNumber?: string;
+}
+
+export class CatalogItem extends Model<CatalogItemAttributes> implements CatalogItemAttributes {
   public name!: string;
   public description!: string;
   public partNumber!: string;
   public specifications!: JSON;
 }
 
-export function initCatalogItem(sequelize: any) {
-  CatalogItem.init(
-    {
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      description: {
-        type: DataTypes.TEXT,
-      },
-      partNumber: {
-        type: DataTypes.STRING,
-        unique: true,
-      },
-      specifications: {
-        type: DataTypes.JSONB,
-      },
+export const initCatalogItem = (sequelize: Sequelize) => {
+  CatalogItem.init({
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true, // <--- Isso garante que é único
     },
-    { sequelize, modelName: "CatalogItem" }
-  );
-}
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+    },
+    partNumber: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+  }, {
+    sequelize,
+    tableName: 'CatalogItems',
+  });
+};
 
 export default CatalogItem;

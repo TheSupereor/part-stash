@@ -17,29 +17,29 @@ describe('InventoryService.checkoutItem', () => {
     ).rejects.toThrow('ITEM_NOT_FOUND');
   });
 
-  // it('deve lançar erro se não tiver estoque suficiente', async () => {
-  //   (InventoryItem.findByPk as jest.Mock).mockResolvedValue({
-  //     quantity: 3,
-  //     save: jest.fn(),
-  //   });
+  it('deve lançar erro se não tiver estoque suficiente', async () => {
+    (InventoryItem.findByPk as jest.Mock).mockResolvedValue({
+      quantity: 3,
+      save: jest.fn(),
+    });
 
-  //   await expect(
-  //     inventoryService.checkoutItem("123", 5)
-  //   ).rejects.toThrow('INSUFFICIENT_STOCK');
-  // });
+    await expect(
+      inventoryService.checkoutItem(123, 5)
+    ).rejects.toThrow('INSUFFICIENT_STOCK');
+  });
 
-  // it('deve fazer checkout com sucesso', async () => {
-  //   const saveMock = jest.fn();
+  it('deve fazer checkout com sucesso', async () => {
+    const saveMock = jest.fn();
 
-  //   (InventoryItem.findByPk as jest.Mock).mockResolvedValue({
-  //     quantity: 10,
-  //     save: saveMock,
-  //   });
+    (InventoryItem.findByPk as jest.Mock).mockResolvedValue({
+      quantity: 10,
+      save: saveMock,
+    });
 
-  //   const result = await inventoryService.checkoutItem("123", 5);
+    const result = await inventoryService.checkoutItem(123, 5);
 
-  //   expect(result.quantity).toBe(5); // 10 - 5
-  //   expect(saveMock).toHaveBeenCalled();
-  // });
+    expect(result.quantity).toBe(5); // 10 - 5
+    expect(saveMock).toHaveBeenCalled();
+  });
 
 });
